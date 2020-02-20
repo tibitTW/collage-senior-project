@@ -16,7 +16,7 @@ for pic, contour in enumerate(cnts):
     print(f'({x}, {y})', f'{w} x {h}, size', area)
     if y > 100: img = cv.drawContours(img, contour, -1, (153, 51, 204), 2)
 
-cv.imwrite('oput_0211.jpg', img)
+cv.imwrite('./output/oput_0211.jpg', img)
 
 plt.subplot(141), plt.imshow(edges), plt.title('Edges')
 plt.subplot(142), plt.imshow(img), plt.title('Image')

@@ -3,7 +3,7 @@ import cv2 as cv
 import matplotlib.pyplot as plt
 from time import sleep
 
-cap = cv.VideoCapture('v3.mp4')
+cap = cv.VideoCapture('src/v3.mp4')
 w, h, _ = cap.read()[1].shape
 cx, cy = 960, 540
 

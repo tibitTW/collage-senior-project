@@ -35,7 +35,7 @@ while True:
 
     cv.imshow('frame', frame)
     # out.write(frame)
-    sleep(0.1)
+    sleep(0.01)
 
     if cv.waitKey(1) & 0xFF == ord('q'):
         break

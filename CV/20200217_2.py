@@ -2,7 +2,7 @@ from time import sleep
 import matplotlib.pyplot as plt
 from statistics import mean
 
-f = open('0217_output.txt')
+f = open('./0217_output.txt', 'r')
 data = list(map(int, f.read().split('\n')))
 
 filtered5 = [mean(data[n-4:n+1]) for n in range(4, len(data))]
