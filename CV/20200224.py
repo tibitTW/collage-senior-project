@@ -3,6 +3,9 @@ import cv2 as cv
 import matplotlib.pyplot as plt
 from time import sleep
 from statistics import mean
+from PLC_Control import width_decrease, width_increase
+
+WIDTH_MIN, WIDTH_MAX = 80, 100
 
 cap = cv.VideoCapture('src/v3.mp4')
 w, h, _ = cap.read()[1].shape
@@ -62,8 +65,18 @@ while True:
     temp.append(width)
     temp.pop(0)
     temp.sort()
-        
-    print('Avg:', mean(temp[1:-1]))
+    
+    avg = mean(temp[1:-1])
+
+    if avg < WIDTH_MIN: 
+        width_increase()
+        print('Increase')
+    
+    if avg > WIDTH_MAX:
+        width_decrease()
+        print('Decrease')
+
+    print('Avg:', avg)
 
     cv.imshow('cutted', cutted)
     # cv.imshow('th50', th50)
