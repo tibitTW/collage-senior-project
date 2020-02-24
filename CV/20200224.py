@@ -68,18 +68,22 @@ while True:
     
     avg = mean(temp[1:-1])
 
-    if avg < WIDTH_MIN: 
-        width_increase()
-        print('Increase')
-    
-    if avg > WIDTH_MAX:
-        width_decrease()
-        print('Decrease')
+    if avg == 0:
+        pass
+    else:
+        if avg < WIDTH_MIN: 
+            width_increase()
+            print('Increase')
+        
+        if avg > WIDTH_MAX:
+            width_decrease()
+            print('Decrease')
 
     print('Avg:', avg)
 
+    cv.imshow('frame', frame)
     cv.imshow('cutted', cutted)
-    # cv.imshow('th50', th50)
+    cv.imshow('th50', th50)
 
     sleep(0.01)
 
