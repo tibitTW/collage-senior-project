@@ -1,5 +1,8 @@
 import pygame as pg
 
+def set_value(id:int, value:int):
+    pass
+
 # color map
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -29,16 +32,11 @@ while run:
     for event in pg.event.get():
         if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE): run = False
 
-        if event.type == pg.KEYDOWN and event.key == pg.K_q: gun_speed += 1
-        if event.type == pg.KEYDOWN and event.key == pg.K_a: gun_speed -= 1
-        if event.type == pg.KEYDOWN and event.key == pg.K_w: solder_speed += 1
-        if event.type == pg.KEYDOWN and event.key == pg.K_s: solder_speed -= 1
-        if event.type == pg.KEYDOWN and event.key == pg.K_e: gun_height += 1
-        if event.type == pg.KEYDOWN and event.key == pg.K_d: gun_height -= 1
-        if event.type == pg.KEYDOWN and event.key == pg.K_r: v += 1
-        if event.type == pg.KEYDOWN and event.key == pg.K_f: v -= 1
-        if event.type == pg.KEYDOWN and event.key == pg.K_t: a += 1
-        if event.type == pg.KEYDOWN and event.key == pg.K_f: a -= 1
+        if event.type == pg.KEYDOWN and event.key == pg.K_q: pass
+        if event.type == pg.KEYDOWN and event.key == pg.K_w: pass
+        if event.type == pg.KEYDOWN and event.key == pg.K_e: pass
+        if event.type == pg.KEYDOWN and event.key == pg.K_r: pass
+        if event.type == pg.KEYDOWN and event.key == pg.K_t: pass
 
     WIN.fill(BLACK)
 
