@@ -1,7 +1,14 @@
 import pygame as pg
 
 from modbus import *
-from interface import *
+
+# color map
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+BLUE = (0, 0, 255)
+YELLOW = (255 ,255, 0)
 
 # control value
 gun_speed = 0
@@ -9,18 +16,26 @@ solder_speed = 0
 gun_height = 0
 v, a = 0, 0
 
+pg.init()
+pg.font.init()
+
+font = pg.font.SysFont('Noto Sans CJK', 40)
+W, H = 370, 272
+WIN = pg.display.set_mode((W, H), pg.FULLSCREEN)
+
 run = True
 while run:
     for event in pg.event.get():
         if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE): run = False
 
+        # key event listener
         if event.type == pg.KEYDOWN and event.key == pg.K_q: pass
         if event.type == pg.KEYDOWN and event.key == pg.K_w: pass
         if event.type == pg.KEYDOWN and event.key == pg.K_e: pass
         if event.type == pg.KEYDOWN and event.key == pg.K_r: pass
         if event.type == pg.KEYDOWN and event.key == pg.K_t: pass
 
-    WIN.fill(color.BLACK)
+    WIN.fill(BLACK)
 
     gun_speed_text = font.render(str(gun_speed), True, YELLOW)
     width = gun_speed_text.get_width()
