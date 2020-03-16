@@ -27,7 +27,7 @@ class client:
         print(f'Connection \'{self._ip}\' closed.')
 
     ###
-    def set_value(self, name, value:int):
+    def write_coil_value(self, name, value:int):
         if name == 0:
             # 設定走速
             pass
@@ -38,7 +38,7 @@ class client:
             pass
 
     ###
-    def read_value(self, name):
+    def read_coil_value(self, name):
 
         value = 0
 
