@@ -46,14 +46,14 @@ while run:
         # value_key event listener
         if event.type == pg.KEYDOWN:
             if event.key == pg.K_q: gun_speed += 1
-            if event.key == pg.K_a: gun_speed -= 1
             if event.key == pg.K_w: solder_speed += 1
-            if event.key == pg.K_s: solder_speed -= 1
             if event.key == pg.K_e: gun_height += 1
-            if event.key == pg.K_d: gun_height -= 1
             if event.key == pg.K_r: v += 1
-            if event.key == pg.K_f: v -= 1
             if event.key == pg.K_t: a += 1
+            if event.key == pg.K_a: gun_speed -= 1
+            if event.key == pg.K_s: solder_speed -= 1
+            if event.key == pg.K_d: gun_height -= 1
+            if event.key == pg.K_f: v -= 1
             if event.key == pg.K_g: a -= 1
 
     WIN.fill(BLACK)

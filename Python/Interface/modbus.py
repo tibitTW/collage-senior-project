@@ -9,7 +9,7 @@ class client:
 
     ###
     def __str__(self):
-        pass
+        return 'Ip: ' + self.ip
 
     def set_ip(self, new_ip):
         self._ip = new_ip
