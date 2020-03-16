@@ -2,61 +2,66 @@ import pygame as pg
 
 from modbus import *
 
-# color map
+####### color map #######
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 YELLOW = (255 ,255, 0)
-
-# control value
+##### control value #####
 gun_speed = 0
 solder_speed = 0
 gun_height = 0
 v, a = 0, 0
+#########################
 
+####### iniaialize interface(pygame) #########
 pg.init()
 pg.font.init()
 
 font = pg.font.SysFont('Noto Sans CJK', 40)
 W, H = 370, 272
-WIN = pg.display.set_mode((W, H), pg.FULLSCREEN)
+WIN = pg.display.set_mode((W, H))
+# WIN = pg.display.set_mode((W, H), pg.FULLSCREEN)
 
+####### functions #######
+def print_text(text:str, position:int, color = YELLOW):
+    if type(text) != str: 
+        print('Text type must be string.')
+        return
+
+    text = font.render(text, True, color)
+    width = text.get_width()
+    x = W//8 * (position*2 - 1) - width//2
+    WIN.blit(text, (x, 220))
+
+#########　main loop #########
 run = True
 while run:
     for event in pg.event.get():
+        # quit
         if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE): run = False
 
-        # key event listener
-        if event.type == pg.KEYDOWN and event.key == pg.K_q: pass
-        if event.type == pg.KEYDOWN and event.key == pg.K_w: pass
-        if event.type == pg.KEYDOWN and event.key == pg.K_e: pass
-        if event.type == pg.KEYDOWN and event.key == pg.K_r: pass
-        if event.type == pg.KEYDOWN and event.key == pg.K_t: pass
+        # value_key event listener
+        if event.type == pg.KEYDOWN:
+            if event.key == pg.K_q: gun_speed += 1
+            if event.key == pg.K_a: gun_speed -= 1
+            if event.key == pg.K_w: solder_speed += 1
+            if event.key == pg.K_s: solder_speed -= 1
+            if event.key == pg.K_e: gun_height += 1
+            if event.key == pg.K_d: gun_height -= 1
+            if event.key == pg.K_r: v += 1
+            if event.key == pg.K_f: v -= 1
+            if event.key == pg.K_t: a += 1
+            if event.key == pg.K_g: a -= 1
 
     WIN.fill(BLACK)
 
-    gun_speed_text = font.render(str(gun_speed), True, YELLOW)
-    width = gun_speed_text.get_width()
-    x = W//8 - width//2
-    y = 220
-    WIN.blit(gun_speed_text, (x, y))
-
-    solder_speed_text = font.render(str(solder_speed), True, YELLOW)
-    width = solder_speed_text.get_width()
-    x = W//8 * 3 - width//2
-    WIN.blit(solder_speed_text, (x, y))
-
-    gun_height_text = font.render(str(gun_height), True, YELLOW)
-    width = gun_height_text.get_width()
-    x = W//8 * 5 - width//2
-    WIN.blit(gun_height_text, (x, y))
-
-    v_a_text = font.render(str(v) + '/' + str(a), True, YELLOW)
-    width = v_a_text.get_width()
-    x = W//8 * 7 - width//2
-    WIN.blit(v_a_text, (x, y))
+    print_text(str(gun_speed), 1)
+    print_text(str(solder_speed), 2)
+    print_text(str(gun_height), 3)
+    print_text(f'{str(v)}/{str(a)}', 4)
 
     pg.display.update()
 

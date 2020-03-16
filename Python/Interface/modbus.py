@@ -7,6 +7,7 @@ class client:
     def __init__(self, ip:str = '192.168.1.87'):
         self._ip = ip
 
+    ###
     def __str__(self):
         pass
 
@@ -15,7 +16,6 @@ class client:
         
     def connect(self):
         self.client = ModbusTcpClient(self._ip)
-
         try:
             self.client.read_coil(0)
             print('Connect Success.')
@@ -26,6 +26,7 @@ class client:
         self.client.close()
         print(f'Connection \'{self._ip}\' closed.')
 
+    ###
     def set_value(self, name, value:int):
         if name == 0:
             # 設定走速
@@ -36,7 +37,9 @@ class client:
         else:
             pass
 
+    ###
     def read_value(self, name):
+
         value = 0
 
         return value
