@@ -47,11 +47,11 @@ def print_text(text:str, position:int, line:bool = 0, color = YELLOW):
     x = W//8 * (position*2 - 1) - width//2
     WIN.blit(text, (x, y))
 
-def set_val_button_pressed(id:int):
+def set_val(id:int):
     if id == 0:
-        set_gun_speed()
+        pass # set_gun_speed
     elif id == 1:
-        set_solder_speed()
+        pass # set_solder_speed
     
 #########　main loop #########
 run = True
