@@ -2,6 +2,7 @@ import pygame as pg
 from time import sleep
 
 from modbus import *
+from constant import plc
 
 ####### color map #######
 WHITE = (255, 255, 255)
@@ -52,7 +53,7 @@ def set_val(id:int):
         pass # set_gun_speed
     elif id == 1:
         pass # set_solder_speed
-    
+
 #########　main loop #########
 run = True
 while run:
@@ -75,6 +76,11 @@ while run:
 
     WIN.fill(BLACK)
 
+    gun_speed_value = plc_main.read_value(GUN_SPEED_VALUE)
+    solder_speed_value = plc_main.read_value(SOLDER_SPEED_VALUE)
+    v_value = plc_main.read_value(GUN_VOLTAGE)
+    a_value = plc_main.read_value(GUN_AMP)
+
     print_text(str(gun_speed_value), 1)
     print_text('mm/min', 1, 1)
     print_text(str(solder_speed_value), 2)
@@ -88,4 +94,4 @@ while run:
     pg.time.delay(200)
 
 pg.quit()
-plc.disconnect()
+plc_main.disconnect()

@@ -1,7 +1,6 @@
 from pymodbus.client.sync import ModbusTcpClient
 
-GUN_SPEED_VALUE = 0
-SOLDER_SPEED_VALUE = 1
+from constant import *
 
 class plc:
     def __init__(self, ip:str = '192.168.1.87'):
@@ -32,7 +31,11 @@ class plc:
             value = self.client.read_holding_registers(10)
         elif id == SOLDER_SPEED_VALUE: # read register
             value = self.client.read_holding_registers(12)
-        else: pass
+        elif id == GUN_VOLTAGE:
+            value = self.client.read_holding_registers(100)
+        elif id == GUN_AMP:
+            value = self.client.read_holding_registers(200)
+        else: return
 
         return value
 
@@ -40,5 +43,5 @@ class plc:
         if id == GUN_SPEED_VALUE:
             self.client.write_register(10, value)
         elif id == SOLDER_SPEED_VALUE:
-            self.client.write_register(10, value)
-        else: pass
+            self.client.write_register(12, value)
+        else: return

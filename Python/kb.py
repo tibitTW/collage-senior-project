@@ -1,8 +1,6 @@
 import RPi.GPIO as GPIO
 from time import sleep
 
-is_locked = False
-
 key = ('1', '2', '3', '4', '5', '6', '7', '8', '9', '*', '0', '#')
 
 scan_pins = (24, 22, 18, 16)
@@ -29,9 +27,5 @@ def scan():
 	if key_status.count(1) == 1:
 		print(key[key_status.index(1)])
 
-# try:
-# 	while True:
-# 		kb_scan()
-
-# finally:
-# 	GPIO.cleanup()
+def close():
+	GPIO.cleanup()
