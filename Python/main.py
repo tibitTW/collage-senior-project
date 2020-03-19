@@ -1,4 +1,5 @@
 import pygame as pg
+from time import sleep
 
 from modbus import *
 
@@ -46,6 +47,12 @@ def print_text(text:str, position:int, line:bool = 0, color = YELLOW):
     x = W//8 * (position*2 - 1) - width//2
     WIN.blit(text, (x, y))
 
+def set_val_button_pressed(id:int):
+    if id == 0:
+        set_gun_speed()
+    elif id == 1:
+        set_solder_speed()
+    
 #########　main loop #########
 run = True
 while run:
@@ -78,6 +85,7 @@ while run:
     print_text('V/A', 4, 1)
 
     pg.display.update()
-    pg.time.delay(100)
+    pg.time.delay(200)
 
 pg.quit()
+plc.disconnect()
