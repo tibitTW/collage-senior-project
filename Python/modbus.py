@@ -28,13 +28,13 @@ class plc:
     ###
     def read_value(self, id:int):
         if id == GUN_SPEED_VALUE: # read coil
-            value = self.client.read_holding_registers(10)
+            value = self.client.read_holding_registers(10).registers
         elif id == SOLDER_SPEED_VALUE: # read register
-            value = self.client.read_holding_registers(12)
+            value = self.client.read_holding_registers(12).registers
         elif id == GUN_VOLTAGE:
-            value = self.client.read_holding_registers(100)
+            value = self.client.read_holding_registers(100).registers
         elif id == GUN_AMP:
-            value = self.client.read_holding_registers(200)
+            value = self.client.read_holding_registers(200).registers
         else: return
 
         return value

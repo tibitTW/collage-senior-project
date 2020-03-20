@@ -1,8 +1,9 @@
 import pygame as pg
 from time import sleep
 
-from modbus import *
-from constant import plc
+from constant import *
+from modbus import plc
+import kb
 
 ####### color map #######
 WHITE = (255, 255, 255)
@@ -49,10 +50,24 @@ def print_text(text:str, position:int, line:bool = 0, color = YELLOW):
     WIN.blit(text, (x, y))
 
 def set_val(id:int):
-    if id == 0:
-        pass # set_gun_speed
-    elif id == 1:
-        pass # set_solder_speed
+    if id == GUN_SPEED_VALUE:
+        address = 10
+    elif id == SOLDER_SPEED_VALUE:
+        address = 12
+    
+    locked = False
+    temp = ''
+    while True:
+        key = kb.scan()
+        if key == '#': break
+
+        if key != 0:
+            temp += key
+            locked = key
+        
+        else: locked = False
+    
+    print(temp)
 
 #########　main loop #########
 run = True
@@ -73,6 +88,7 @@ while run:
             if event.key == pg.K_d: gun_height_value -= 1
             if event.key == pg.K_f: v_value -= 1
             if event.key == pg.K_g: a_value -= 1
+            if event.key == pg.K_z: set_val()
 
     WIN.fill(BLACK)
 
