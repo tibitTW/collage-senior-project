@@ -30,7 +30,8 @@ W, H = 370, 272
 WIN = pg.display.set_mode((W, H))
 # WIN = pg.display.set_mode((W, H), pg.FULLSCREEN)
 ########### initialize connect ###############
-plc_main = plc()
+# plc_main = plc()
+kb.init()
 
 ####### functions #######
 def print_text(text:str, position:int, line:bool = 0, color = YELLOW):
@@ -60,14 +61,18 @@ def set_val(id:int):
     while True:
         key = kb.scan()
         if key == '#': break
-
-        if key != 0:
-            temp += key
-            locked = key
+        elif key == '*': pass
+        elif key != 0:
+            if not locked:
+                temp += key
+                print(temp)
+                locked = key
         
         else: locked = False
     
     print(temp)
+    return int(temp)
+    # plc.write_value(id, int(temp))
 
 #########　main loop #########
 run = True
@@ -76,26 +81,18 @@ while run:
         # quit
         if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE): run = False
 
-        # value_key event listener
-        if event.type == pg.KEYDOWN:
-            if event.key == pg.K_q: gun_speed_value += 1
-            if event.key == pg.K_w: solder_speed_value += 1
-            if event.key == pg.K_e: gun_height_value += 1
-            if event.key == pg.K_r: v_value += 1
-            if event.key == pg.K_t: a_value += 1
-            if event.key == pg.K_a: gun_speed_value -= 1
-            if event.key == pg.K_s: solder_speed_value -= 1
-            if event.key == pg.K_d: gun_height_value -= 1
-            if event.key == pg.K_f: v_value -= 1
-            if event.key == pg.K_g: a_value -= 1
-            if event.key == pg.K_z: set_val()
-
+    k = kb.scan()
+    print(k)
+    if k == '*':
+        gun_speed_value = set_val(GUN_SPEED_VALUE)
+        print('inputing value')
+        
     WIN.fill(BLACK)
 
-    gun_speed_value = plc_main.read_value(GUN_SPEED_VALUE)
-    solder_speed_value = plc_main.read_value(SOLDER_SPEED_VALUE)
-    v_value = plc_main.read_value(GUN_VOLTAGE)
-    a_value = plc_main.read_value(GUN_AMP)
+    # gun_speed_value = plc_main.read_value(GUN_SPEED_VALUE)
+    # solder_speed_value = plc_main.read_value(SOLDER_SPEED_VALUE)
+    # v_value = plc_main.read_value(GUN_VOLTAGE)
+    # a_value = plc_main.read_value(GUN_AMP)
 
     print_text(str(gun_speed_value), 1)
     print_text('mm/min', 1, 1)
@@ -110,4 +107,5 @@ while run:
     pg.time.delay(200)
 
 pg.quit()
-plc_main.disconnect()
+kb.close()
+# plc_main.disconnect()

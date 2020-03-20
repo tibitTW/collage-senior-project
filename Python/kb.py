@@ -6,8 +6,8 @@ from time import sleep
 # key map, 1d array is enough
 key = ('1', '2', '3', '4', '5', '6', '7', '8', '9', '*', '0', '#')
 
-scan_pins = (24, 22, 18, 16)
-read_pins = (12, 10, 8)
+scan_pins = (37, 35, 33, 31)
+read_pins = (15, 13, 11)
 
 # initialize GPIO and pins
 def init():
@@ -35,7 +35,6 @@ def scan():
 
 	# output key when 1 key pressed only
 	if key_status.count(1) == 1:
-		print(key[key_status.index(1)])
 		return key[key_status.index(1)]
 
 	return 0

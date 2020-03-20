@@ -5,20 +5,20 @@ from constant import *
 class plc:
     def __init__(self, ip:str = '192.168.1.87'):
         self._ip = ip
+        self.client = ModbusTcpClient(self._ip)
 
     ###
     def __str__(self):
-        return 'Ip: ' + self.ip
+        return 'Ip: ' + self._ip
 
     def set_ip(self, new_ip):
         self._ip = new_ip
         
     def connect(self):
-        self.client = ModbusTcpClient(self._ip)
-        if not client.connect():
-            print('Connection failed. Please check error and try again.')
-        else:
+        if client.connect():
             print('Connect Success.')
+        else:
+            print('Connection failed. Please check error and try again.')
 
     def disconnect(self):
         if client.connect():
