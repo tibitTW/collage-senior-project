@@ -19,7 +19,7 @@ gun_height_value = 0
 v_value, a_value = 0, 0
 #########################
 
-####### iniaialize interface(pygame) #########
+######## iniaialize interface(pygame) ########
 pg.init()
 pg.font.init()
 
@@ -29,8 +29,9 @@ font_small = pg.font.SysFont('Noto Sans CJK', 24)
 W, H = 370, 272
 WIN = pg.display.set_mode((W, H))
 # WIN = pg.display.set_mode((W, H), pg.FULLSCREEN)
-########### initialize connect ###############
+### initialize modbus connect and keyboard ###
 # plc_main = plc()
+# plc.connect()
 kb.init()
 
 ####### functions #######
@@ -53,8 +54,10 @@ def print_text(text:str, position:int, line:bool = 0, color = YELLOW):
 def set_val(id:int):
     if id == GUN_SPEED_VALUE:
         address = 10
+        default_val = gun_speed_value
     elif id == SOLDER_SPEED_VALUE:
         address = 12
+        default_val = solder_speed_value
     
     locked = False
     temp = ''
@@ -65,14 +68,16 @@ def set_val(id:int):
         elif key != 0:
             if not locked:
                 temp += key
-                print(temp)
                 locked = key
-        
+
         else: locked = False
+
+        if temp != '' and int(temp) >= 2000: temp = '2000'
+        WIN.fill(BLACK)
+        print_text(str(temp), 1, color=RED)
     
-    print(temp)
-    return int(temp)
     # plc.write_value(id, int(temp))
+    return (temp if temp != '' else default_val)
 
 #########　main loop #########
 run = True
@@ -82,10 +87,8 @@ while run:
         if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE): run = False
 
     k = kb.scan()
-    print(k)
     if k == '*':
         gun_speed_value = set_val(GUN_SPEED_VALUE)
-        print('inputing value')
         
     WIN.fill(BLACK)
 

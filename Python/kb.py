@@ -1,5 +1,3 @@
-'''matrix scan keyboard using GPIO in Raspberry Pi'''
-
 import RPi.GPIO as GPIO
 from time import sleep
 
