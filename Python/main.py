@@ -1,3 +1,5 @@
+#! /usr/bin/env python3
+
 import pygame as pg
 from time import sleep
 
@@ -29,9 +31,10 @@ font_small = pg.font.SysFont('Noto Sans CJK', 24)
 W, H = 370, 272
 WIN = pg.display.set_mode((W, H))
 # WIN = pg.display.set_mode((W, H), pg.FULLSCREEN)
+
 ### initialize modbus connect and keyboard ###
-# plc_main = plc()
-# plc.connect()
+plc_main = plc()
+plc.connect()
 kb.init()
 
 ####### functions #######
@@ -76,26 +79,16 @@ def set_val(id:int):
         WIN.fill(BLACK)
         print_text(str(temp), 1, color=RED)
     
-    # plc.write_value(id, int(temp))
+    plc.write_value(id, int(temp))
     return (temp if temp != '' else default_val)
 
-#########　main loop #########
-run = True
-while run:
-    for event in pg.event.get():
-        # quit
-        if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE): run = False
-
-    k = kb.scan()
-    if k == '*':
-        gun_speed_value = set_val(GUN_SPEED_VALUE)
-        
+def draw_main_screen():
     WIN.fill(BLACK)
 
-    # gun_speed_value = plc_main.read_value(GUN_SPEED_VALUE)
-    # solder_speed_value = plc_main.read_value(SOLDER_SPEED_VALUE)
-    # v_value = plc_main.read_value(GUN_VOLTAGE)
-    # a_value = plc_main.read_value(GUN_AMP)
+    gun_speed_value = plc_main.read_value(GUN_SPEED_VALUE)
+    solder_speed_value = plc_main.read_value(SOLDER_SPEED_VALUE)
+    v_value = plc_main.read_value(GUN_VOLTAGE)
+    a_value = plc_main.read_value(GUN_AMP)
 
     print_text(str(gun_speed_value), 1)
     print_text('mm/min', 1, 1)
@@ -105,6 +98,33 @@ while run:
     print_text('mm', 3, 1)
     print_text(f'{str(v_value)}/{str(a_value)}', 4)
     print_text('V/A', 4, 1)
+
+#########　main loop #########
+run = True
+while run:
+    for event in pg.event.get():
+        # quit script
+        if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE): run = False
+
+        # auto mode, at plc S5
+    if plc_main.read_value(0xB000+5):
+        pass
+
+        # manual mode, at plc S4
+    elif plc_main.read_value(0xB000+4):
+        k = kb.scan()
+        if k == '*':
+
+            # read plc coil M13
+            if plc_main.read_value(0x2000+13):
+                set_val(GUN_SPEED_VALUE)
+
+            # read plc coil M14
+            elif plc_main.read_value(0x2000+14):
+                set_val(SOLDER_SPEED_VALUE)
+            else: pass
+
+    draw_main_screen()
 
     pg.display.update()
     pg.time.delay(200)
