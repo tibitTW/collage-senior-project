@@ -16,3 +16,9 @@ PLC -> S5
 
 - 焊接開始
 PLC -> M500
+
+- python script autostart
+  1. ~/etc/rc.local
+  2. ~/.profile
+  3. ~/.config/lxsession/LXDE-pi/autostart
+  4. ~/.bashrc
