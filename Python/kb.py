@@ -4,38 +4,36 @@ from time import sleep
 # key map, 1d array is enough
 key = ('1', '2', '3', '4', '5', '6', '7', '8', '9', '*', '0', '#')
 
-scan_pins = (37, 35, 33, 31)
-read_pins = (15, 13, 11)
+# define pins
+scan_pins = (25, 8, 7, 1)
+read_pins = (4, 3, 2)
 
-# initialize GPIO and pins
-def init():
-	GPIO.setmode(GPIO.BOARD)
-	for pin in scan_pins: GPIO.setup(pin, GPIO.OUT)
-	for pin in read_pins: GPIO.setup(pin, GPIO.IN)
 
-# scan input
-def scan():
-	# record status of every key
-	key_status = []
+def init():  # initialize GPIO and pins
+    GPIO.setmode(GPIO.BCM)
+    for pin in scan_pins:
+        GPIO.setup(pin, GPIO.OUT)
+    for pin in read_pins:
+        GPIO.setup(pin, GPIO.IN)
 
-	# scan every line in keyboard
-	for i in range(4):
-		# throw singals
-		GPIO.output(scan_pins[i], True)
 
-		# scan every key in line
-		for j in range(3):
-			# read key status
-			key_status.append(1 if GPIO.input(read_pins[j]) else 0)
+def scan():  # scan input
+    key_status = []  # record status of every key
 
-		GPIO.output(scan_pins[i], False)
-		sleep(0.01)
+    for i in range(4):  # scan every line in keyboard
+        GPIO.output(scan_pins[i], False)  # throw singals
 
-	# output key when 1 key pressed only
-	if key_status.count(1) == 1:
-		return key[key_status.index(1)]
+        for j in range(3):  # scan every key in line and read key status
+            key_status.append(1 if GPIO.input(read_pins[j]) else 0)
 
-	return 0
+        GPIO.output(scan_pins[i], True)
+        sleep(0.01)
+
+    if key_status.count(0) == 1:  # output key when 1 key pressed only
+        return key[key_status.index(0)]
+
+    return 0
+
 
 def close():
-	GPIO.cleanup()
+    GPIO.cleanup()
