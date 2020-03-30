@@ -81,12 +81,16 @@ def set_val(id: int):
         else:
             locked = False
 
-    if temp != '':
         if int(temp) >= 2000:
             temp = '2000'
 
-    plc_main.write_value(id, int(temp))
-    return (temp if temp != '' else default_val)
+    if temp != '':
+        plc_main.write_value(id, int(temp))
+        return temp
+
+    else:
+        plc_main.write_value(id, default_val)
+        return default_val
 
 
 def draw_main_screen():
