@@ -97,12 +97,12 @@ def draw_main_screen():
     WIN.fill(BLACK)
 
     try:
-        gun_speed_value = plc_main.read_value(GUN_SPEED_VALUE)
+        gun_speed_value = plc_main.read_value(GUN_SPEED_VALUE) * 2/3
         solder_speed_value = plc_main.read_value(SOLDER_SPEED_VALUE)
         v_value = plc_main.read_value(GUN_VOLTAGE)
         a_value = plc_main.read_value(GUN_AMP)
 
-        print_text(str(gun_speed_value), 1)
+        print_text(str(gun_speed_value//0.1), 1)
         print_text('mm/min', 1, 1)
         print_text(str(solder_speed_value), 2)
         print_text('mm/min', 2, 1)
