@@ -2,23 +2,22 @@ from picamera import PiCamera
 from picamera.array import PiRGBArray
 import cv2 as cv
 
-camera = PiCamera()
-camera.resolution = (1280, 720)
+resolution = (640, 480)
 
 
 def init():
     camera = PiCamera()
-    camera.resolution = (1280, 720)
+    camera.resolution = resolution
+    rawCapture = PiRGBArray(camera, size=resolution)
 
 
-rawCapture = PiRGBArray(camera, size=(1280, 720))
+def stream(camera, rawCapture):
+    for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=True):
+        image = frame.array
+        cv.imshow('frame', image)
 
-for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=True):
-    image = frame.array
-    cv.imshow('frame', image)
+        rawCapture.truncate(0)
 
-    rawCapture.truncate(0)
-
-    key = cv.waitKey(1) & 0xFF
-    if key == ord('q'):
-        break
+        key = cv.waitKey(1) & 0xFF
+        if key == ord('q'):
+            break
