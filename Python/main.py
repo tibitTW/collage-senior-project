@@ -6,6 +6,7 @@ from time import sleep
 from constant import *
 from modbus import plc
 import kb
+import camera
 
 ####### color map #######
 WHITE = (255, 255, 255)
@@ -114,9 +115,10 @@ def draw_main_screen():
         pass
 
 
-def close_win():
+def close():
     pg.quit()
     kb.close()
+    plc_main.disconnect()
     exit()
 
 
@@ -125,7 +127,7 @@ while True:
     for event in pg.event.get():
         # quit script
         if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE):
-            close_win()
+            close()
 
     if not plc_main.is_connected:
         plc_main.connect()
@@ -146,11 +148,14 @@ while True:
             else:
                 pass
 
+    # automode
+    elif plc_main.read_value(AUTO_MODE):
+        if plc_main.read_value(AUTO_START):
+            camera.detect()
+
     draw_main_screen()
 
     pg.display.update()
     pg.time.delay(100)
 
-pg.quit()
-kb.close()
-plc_main.disconnect()
+close()

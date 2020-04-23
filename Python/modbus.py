@@ -36,6 +36,8 @@ class plc:
             return self.__client.read_holding_registers(200).registers
         elif id == MENUAL_MODE:
             return self.__client.read_coils(0xB000+4).bits[0]
+        elif id == AUTO_MODE:
+            return self.__client.read_coils(0xB000+5).bits[0]
         elif id == SET_GUN_SPEED:
             return self.__client.read_coils(0x2000+13).bits[0]
         elif id == SET_SOLDER_SPEED:
