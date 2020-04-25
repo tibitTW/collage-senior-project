@@ -4,7 +4,8 @@ import matplotlib.pyplot as plt
 from time import sleep
 
 cap = cv.VideoCapture('src/20200417.mp4')
-
+out = cv.VideoWriter('output/output.avi', cv.VideoWriter_fourcc(
+    'M', 'J', 'P', 'G'), 20, (800, 600))
 while True:
 
     ret, frame = cap.read()
@@ -50,7 +51,6 @@ while True:
     if biggest_area > 1000:
         print(biggest_area)
         x, y, w, h = cv.boundingRect(biggest_cnt)
-        print(x, y, w, h)
         if y < 200:
             cv.rectangle(frame, (x-3, y-3), (x+w+3, y+h+3), (255, 255, 255), 2)
             cv.circle(frame, (x+w//2, y+h//2), 3, (255, 255, 255), -1)
@@ -59,6 +59,7 @@ while True:
                        0.6, (255, 255, 255), 1, cv.LINE_AA)
 
     cv.imshow('frame', frame)
+    out.write(frame)
     # cv.imshow('red', red_mask)
 
     sleep(0.01)
