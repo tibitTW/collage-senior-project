@@ -1,12 +1,14 @@
 #! /usr/bin/env python3
 
 import pygame as pg
-from time import sleep
 
 from constant import *
 from modbus import plc
 import kb
-import camera
+
+from picamera import PiCamera
+from picamera.array import PiRGBArray
+import cv2 as cv
 
 ####### color map #######
 WHITE = (255, 255, 255)
@@ -37,6 +39,13 @@ WIN = pg.display.set_mode((W, H), pg.FULLSCREEN)
 plc_main = plc()
 print(plc_main.connect())
 kb.init()
+
+### initialize camera, including parameters ###
+camera_resolution = (640, 480)
+camera = PiCamera()
+camera.resolution = camera_resolution
+camera.brightness = 25
+rawCapture = PiRGBArray(camera, size=camera_resolution)
 
 ####### functions #######
 
@@ -151,7 +160,13 @@ while True:
     # automode
     elif plc_main.read_value(AUTO_MODE):
         if plc_main.read_value(AUTO_START):
-            camera.detect()
+
+            # camera detect
+            for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=True):
+                image = frame.array
+                cv.imshow('frame', image)
+
+                rawCapture.truncate(0)
 
     draw_main_screen()
 
