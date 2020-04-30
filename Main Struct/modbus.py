@@ -15,7 +15,7 @@ class plc:
             return 'Connect Success.'
         else:
             self.is_connected = False
-            return 'Connection failed. Please check error and try again.'
+            return 'Connection failed. Please check ethernet cable or other errors and try again.'
 
     def disconnect(self):
         if self.__client.connect():

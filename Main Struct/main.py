@@ -143,13 +143,13 @@ def close():
 
 #########　main loop #########
 while True:
+    # quit script
     for event in pg.event.get():
-        # quit script
         if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE):
             close()
 
     if not plc_main.is_connected:
-        plc_main.connect()
+        print(plc_main.connect())
 
     ############ plc buttons status #############
     # manual mode, at plc S4
@@ -164,8 +164,6 @@ while True:
             # read plc coil M14
             elif plc_main.read_value(SET_SOLDER_SPEED):
                 set_val(SOLDER_SPEED_VALUE)
-            else:
-                pass
 
     # automode
     elif plc_main.read_value(AUTO_MODE):
