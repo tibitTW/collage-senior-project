@@ -26,7 +26,7 @@ class plc:
         if not self.__client.connect():
             return
 
-        if id == GUN_SPEED_VALUE:
+        if id == TORCH_SPEED_VALUE:
             return self.__client.read_holding_registers(10).registers
         elif id == SOLDER_SPEED_VALUE:
             return self.__client.read_holding_registers(12).registers
@@ -46,7 +46,7 @@ class plc:
             return None
 
     def write_value(self, id: int, value: int):
-        if id == GUN_SPEED_VALUE:
+        if id == TORCH_SPEED_VALUE:
             self.__client.write_register(10, value)
         elif id == SOLDER_SPEED_VALUE:
             self.__client.write_register(12, value)
