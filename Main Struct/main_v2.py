@@ -166,38 +166,36 @@ if __name__ == "__main__":
             if event.type == pg.QUIT or (event.type == pg.KEYDOWN and (event.key == pg.K_ESCAPE or pg.K_q)):
                 close()
 
-        # 連線錯誤防護
-        if not plc_main.is_connected:
-            if (time() - connect_check_record_time) // 5:
-                connect_check_record_time = time()
-                print('PLC connection error, please check PLC and ethernet cable.')
+        if plc_main.is_connected:
+            mode = plc_main.get_status()
+            # 自動模式
+            if mode == AUTO_MODE:
+                # 影像辨識
+                if plc_main.read_value(AUTO_START):
+                    pass
+            # 手動模式
+            elif mode == MENUAL_MODE:
+                try:
+                    k = kb.scan()
+                    if k == '*':
+                        if plc_main.setting_value(SET_GUN_SPEED):
+                            set_val(TORCH_SPEED_VALUE)
+                        elif plc_main.setting_value(SET_SOLDER_SPEED):
+                            set_val(SOLDER_SPEED_VALUE)
+                        else:
+                            pass
+                except:
+                    pass
 
-        mode = plc_main.get_status()
-        # 自動模式
-        if mode == AUTO_MODE:
-            # 影像辨識
-            if plc_main.read_value(AUTO_START):
-                pass
-        # 手動模式
-        elif mode == MENUAL_MODE:
-            try:
-                k = kb.scan()
-                if k == '*':
-                    if plc_main.setting_value(SET_GUN_SPEED):
-                        set_val(TORCH_SPEED_VALUE)
-                    elif plc_main.setting_value(SET_SOLDER_SPEED):
-                        set_val(SOLDER_SPEED_VALUE)
-                    else:
-                        pass
-            except:
-                pass
-
-        else:
-            if not plc_main.connect():
-                print('PLC Connetion lost. Please check ethernet cable.')
             else:
                 print('PLC problem, please check PLC and switch.')
 
-        draw_main_window(mode)
+            draw_main_window(mode)
+
+        # 連線錯誤
+        else:
+            if (time() - connect_check_record_time) // 5:
+                connect_check_record_time = time()
+                print('PLC connection error, please check PLC and ethernet cable.')
 
 close()
