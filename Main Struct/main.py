@@ -30,8 +30,8 @@ print(plc_main.connect())
 if plc_main.is_connected:
     plc_main.write_value(TORCH_SPEED_VALUE, torch_speed_value_mm_per_min*2//3)
     plc_main.write_value(SOLDER_SPEED_VALUE, solder_speed_value_v*400)
-    v_value = plc_main.read_value(GUN_VOLTAGE)
-    a_value = plc_main.read_value(GUN_AMP)
+    v_value = plc_main.read_value(GUN_VOLTAGE) / 200
+    a_value = plc_main.read_value(GUN_AMP) / 400
 
 ### initialize keyboard ###
 kb.init()
@@ -44,7 +44,7 @@ rawCapture = PiRGBArray(camera, size=camera_resolution)
 ####### functions #######
 
 
-def print_title(text: str, color=WHITE):
+def draw_title(text: str, color=WHITE):
     text = font.render(text, True, color)
 
     width = text.get_width()
@@ -70,17 +70,17 @@ def print_text(text: str, position: int, line: bool = 0, color=YELLOW):
 
 
 def draw_main_screen():
-    WIN.fill(BLACK)
 
     try:
         if plc_main.read_value(AUTO_MODE):
-            print_title('AUTO MODE')
+            draw_title('AUTO MODE')
         elif plc_main.read_value(MENUAL_MODE):
-            print_title('MANUAL MODE')
+            draw_title('MANUAL MODE')
 
-        v_value = plc_main.read_value(GUN_VOLTAGE)
-        a_value = plc_main.read_value(GUN_AMP)
+        v_value = plc_main.read_value(GUN_VOLTAGE) / 200
+        a_value = plc_main.read_value(GUN_AMP) / 400
 
+        WIN.fill(BLACK)
         print_text(str(torch_speed_value_mm_per_min * 1.5), 1)
         print_text('mm/min', 1, 1)
         print_text(str(solder_speed_value_v), 2)
@@ -89,6 +89,7 @@ def draw_main_screen():
         print_text('mm', 3, 1)
         print_text(f'{str(v_value)}/{str(a_value)}', 4)
         print_text('V/A', 4, 1)
+
     except:
         pass
 
@@ -125,8 +126,10 @@ def set_val(id: int):
     if temp != '':
         if id == TORCH_SPEED_VALUE:
             plc_main.write_value(id, int(temp)*2//3)
+            torch_speed_value_mm_per_min = int(temp)
         elif id == SOLDER_SPEED_VALUE:
             plc_main.write_value(id, int(temp)*400)
+            solder_speed_value_v = int(temp)
         return
 
     else:
@@ -150,6 +153,8 @@ while True:
 
     if not plc_main.is_connected:
         print(plc_main.connect())
+
+    draw_main_screen()
 
     ############ plc buttons status #############
     # manual mode, at plc S4
@@ -175,8 +180,6 @@ while True:
                 cv.imshow('frame', image)
 
                 rawCapture.truncate(0)
-
-    draw_main_screen()
 
     pg.display.update()
     pg.time.delay(100)
