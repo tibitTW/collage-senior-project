@@ -90,12 +90,14 @@ def draw_text(text: str, position: int, line: bool = 0, color=YELLOW):
     WIN.blit(text, (x, y))
 
 
-def draw_main_window(title: int):
+def draw_automode_window():
+    WIN.fill(BLACK)
+    draw_title('AUTO MODE')
 
-    if title == AUTO_MODE:
-        draw_title('AUTO MODE')
-    elif title == MENUAL_MODE:
-        draw_title('MANUAL MODE')
+
+def draw_menual_window():
+
+    draw_title('MANUAL MODE')
 
     WIN.fill(BLACK)
     draw_text(str(torch_speed_value_mm_per_min), 1)
@@ -108,8 +110,9 @@ def draw_main_window(title: int):
     draw_text('V/A', 4, 1)
 
 
-def draw_error_window():
-    pass
+def draw_error_window(message):
+    WIN.fill(RED)
+    draw_title(message, WHITE)
 
 
 def set_val(id: int):
@@ -173,6 +176,8 @@ if __name__ == "__main__":
                 # 影像辨識
                 if plc_main.read_value(AUTO_START):
                     pass
+                draw_automode_window()
+
             # 手動模式
             elif mode == MENUAL_MODE:
                 try:
@@ -186,16 +191,18 @@ if __name__ == "__main__":
                             pass
                 except:
                     pass
+                draw_menual_window()
 
             else:
                 print('PLC problem, please check PLC and switch.')
-
-            draw_main_window(mode)
+                draw_error_window('ERROR')
 
         # 連線錯誤
         else:
             if (time() - connect_check_record_time) // 5:
                 connect_check_record_time = time()
                 print('PLC connection error, please check PLC and ethernet cable.')
+
+            draw_error_window('Connection Error')
 
 close()
