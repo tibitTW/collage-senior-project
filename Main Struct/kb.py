@@ -10,6 +10,7 @@ read_pins = (4, 3, 2)
 
 
 def init():  # initialize GPIO and pins
+    GPIO.setwarnings(False)
     GPIO.setmode(GPIO.BCM)
     for pin in scan_pins:
         GPIO.setup(pin, GPIO.OUT)

@@ -30,7 +30,7 @@ class plc:
         elif self.__client.read_coils(0xB000+5).bits[0]:
             return AUTO_MODE
         else:
-            return 0
+            return -1
 
     def setting_value(self, id: int):
         if not self.__client.connect():
@@ -65,8 +65,8 @@ class plc:
 
     def write_value(self, id: int, value: int):
         if id == TORCH_SPEED_VALUE:
-            self.__client.write_register(10, value*2//3)
+            self.__client.write_register(10, int(value*2//3))
         elif id == SOLDER_SPEED_VALUE:
-            self.__client.write_register(12, value*400)
+            self.__client.write_register(12, int(value*400))
         else:
             return

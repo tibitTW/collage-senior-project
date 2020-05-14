@@ -55,14 +55,14 @@ else:
     print('PLC connection error, please check PLC and ethernet cable.')
 
 ### initialize camera, including parameters ###
-try:
-    camera_resolution = (640, 480)
-    camera = PiCamera()
-    camera.resolution = camera_resolution
-    camera.brightness = 25
-    rawCapture = PiRGBArray(camera, size=camera_resolution)
-except:
-    print('Camera cannot be used.')
+# try:
+#     camera_resolution = (640, 480)
+#     camera = PiCamera()
+#     camera.resolution = camera_resolution
+#     camera.brightness = 25
+#     rawCapture = PiRGBArray(camera, size=camera_resolution)
+# except:
+#     print('Camera cannot be used.')
 ####### functions #######
 
 
@@ -86,7 +86,7 @@ def draw_text(text: str, position: int, line: bool = 0, color=YELLOW):
         y = 240
 
     width = text.get_width()
-    x = W//8 * (position*2 - 1) - width//2
+    x = W//6 * (position*2 - 1) - width//2
     WIN.blit(text, (x, y))
 
 
@@ -104,10 +104,8 @@ def draw_menual_window():
     draw_text('mm/min', 1, 1)
     draw_text(str(solder_speed_value_v), 2)
     draw_text('mm/min', 2, 1)
-    draw_text(str(gun_height_value), 3)
-    draw_text('mm', 3, 1)
-    draw_text(f'{str(v_value)}/{str(a_value)}', 4)
-    draw_text('V/A', 4, 1)
+    draw_text(f'{str(v_value)}/{str(a_value)}', 3)
+    draw_text('V/A', 3, 1)
 
 
 def draw_error_window(message):
@@ -161,48 +159,49 @@ def close():
 
 connect_check_record_time = time()
 # main struct
-if __name__ == "__main__":
-    while True:
+while True:
+    print('Loop is running.')
+    # quit scrpit(for keyboard)
+    for event in pg.event.get():
+        if event.type == pg.QUIT or (event.type == pg.KEYDOWN and (event.key == pg.K_ESCAPE or pg.K_q)):
+            close()
 
-        # quit scrpit(for keyboard)
-        for event in pg.event.get():
-            if event.type == pg.QUIT or (event.type == pg.KEYDOWN and (event.key == pg.K_ESCAPE or pg.K_q)):
-                close()
+    if plc_main.is_connected:
+        mode = plc_main.get_status()
+        # 自動模式
+        if mode == AUTO_MODE:
+            # 影像辨識
+            if plc_main.read_value(AUTO_START):
+                pass
+            draw_automode_window()
 
-        if plc_main.is_connected:
-            mode = plc_main.get_status()
-            # 自動模式
-            if mode == AUTO_MODE:
-                # 影像辨識
-                if plc_main.read_value(AUTO_START):
-                    pass
-                draw_automode_window()
+        # 手動模式
+        elif mode == MENUAL_MODE:
+            try:
+                k = kb.scan()
+                if k == '*':
+                    if plc_main.setting_value(SET_GUN_SPEED):
+                        set_val(TORCH_SPEED_VALUE)
+                    elif plc_main.setting_value(SET_SOLDER_SPEED):
+                        set_val(SOLDER_SPEED_VALUE)
+                    else:
+                        pass
+            except:
+                pass
+            draw_menual_window()
 
-            # 手動模式
-            elif mode == MENUAL_MODE:
-                try:
-                    k = kb.scan()
-                    if k == '*':
-                        if plc_main.setting_value(SET_GUN_SPEED):
-                            set_val(TORCH_SPEED_VALUE)
-                        elif plc_main.setting_value(SET_SOLDER_SPEED):
-                            set_val(SOLDER_SPEED_VALUE)
-                        else:
-                            pass
-                except:
-                    pass
-                draw_menual_window()
-
-            else:
-                print('PLC problem, please check PLC and switch.')
-                draw_error_window('ERROR')
-
-        # 連線錯誤
         else:
-            if (time() - connect_check_record_time) // 5:
-                connect_check_record_time = time()
-                print('PLC connection error, please check PLC and ethernet cable.')
+            print('PLC problem, please check PLC and switch.')
+            draw_error_window('ERROR')
 
-            draw_error_window('Connection Error')
+    # 連線錯誤
+    else:
+        if (time() - connect_check_record_time) // 5:
+            connect_check_record_time = time()
+            print('PLC connection error, please check PLC and ethernet cable.')
+
+        draw_error_window('Connection Error')
+
+    sleep(0.1)
 
 close()
