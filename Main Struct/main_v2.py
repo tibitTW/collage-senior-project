@@ -113,6 +113,11 @@ def draw_error_window(message):
     draw_title(message, WHITE)
 
 
+def draw_message_window(message: str, msg_color: list = WHITE, bgcolor: list = RED):
+    WIN.fill(bgcolor)
+    draw_title(message, msg_color)
+
+
 def set_val(id: int):
     kb_locked = False
     temp = ''
@@ -124,11 +129,13 @@ def set_val(id: int):
                 if id == TORCH_SPEED_VALUE:
                     temp = int(temp)
                     temp = 2000 if temp >= 2000 else temp
+                    global torch_speed_value_mm_per_min
                     torch_speed_value_mm_per_min = temp
                     plc_main.write_value(id, temp*2//3)
                 elif id == SOLDER_SPEED_VALUE:
                     temp = int(temp)
                     temp = 10 if temp >= 10 else temp
+                    global solder_speed_value_v
                     solder_speed_value_v = temp
                     plc_main.write_value(id, temp*400)
             else:
@@ -165,7 +172,7 @@ while True:
         if event.type == pg.QUIT or (event.type == pg.KEYDOWN and (event.key == pg.K_ESCAPE or pg.K_q)):
             close()
 
-    if plc_main.is_connected:
+    if plc_main.connect():
         mode = plc_main.get_status()
         # 自動模式
         if mode == AUTO_MODE:
@@ -179,20 +186,22 @@ while True:
             try:
                 k = kb.scan()
                 if k == '*':
+                    print('Setting Value')
                     if plc_main.setting_value(SET_GUN_SPEED):
                         set_val(TORCH_SPEED_VALUE)
+                        print(torch_speed_value_mm_per_min)
                     elif plc_main.setting_value(SET_SOLDER_SPEED):
                         set_val(SOLDER_SPEED_VALUE)
+                        print(solder_speed_value_v)
                     else:
                         pass
-            except:
-                pass
+            except Exception as e:
+                print(e)
 
             draw_menual_window()
 
         else:
-            print('PLC problem, please check PLC and switch.')
-            draw_error_window('ERROR')
+            draw_message_window('RESETING...', bgcolor=BLACK)
 
     # 連線錯誤
     else:
@@ -200,8 +209,7 @@ while True:
             connect_check_record_time = time()
             print('PLC connection error, please check PLC and ethernet cable.')
 
-        WIN.fill(RED)
-        draw_error_window('Connection Error')
+        draw_message_window('Connection Error')
 
     pg.display.update()
     sleep(0.1)

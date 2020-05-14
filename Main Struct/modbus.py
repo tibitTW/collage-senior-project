@@ -47,20 +47,6 @@ class plc:
             print(e)
             return -1
 
-    def check_value(self, id: int):
-        if not self.__client.connect():
-            return
-
-        try:
-            if id == TORCH_SPEED_VALUE:
-                return self.__client.read_holding_registers(10).registers[0]
-            elif id == SOLDER_SPEED_VALUE:
-                return self.__client.read_holding_registers(12).registers[0]
-
-        except Exception as e:
-            print(e)
-            return -1
-
     def read_value(self, id: int):
         if not self.__client.connect():
             return
@@ -71,7 +57,7 @@ class plc:
             elif id == GUN_AMP:
                 return self.__client.read_holding_registers(200).registers[0]
 
-        except:
+        except Exception as e:
             print(e)
             return -1
 
@@ -85,3 +71,17 @@ class plc:
         except Exception as e:
             print(e)
             pass
+
+    def check_value(self, id: int):
+        if not self.__client.connect():
+            return
+
+        try:
+            if id == TORCH_SPEED_VALUE:
+                return self.__client.read_holding_registers(10).registers[0]
+            elif id == SOLDER_SPEED_VALUE:
+                return self.__client.read_holding_registers(12).registers[0]
+
+        except Exception as e:
+            print(e)
+            return -1
