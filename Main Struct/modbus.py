@@ -66,7 +66,7 @@ class plc:
             if id == TORCH_SPEED_VALUE:
                 self.__client.write_register(10, int(value*2//3))
             elif id == SOLDER_SPEED_VALUE:
-                self.__client.write_register(13, int(value*400))
+                self.__client.write_register(12, int(value*400))
 
         except Exception as e:
             print('e2', e)
