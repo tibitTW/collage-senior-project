@@ -160,7 +160,6 @@ def close():
 connect_check_record_time = time()
 # main struct
 while True:
-    print('Loop is running.')
     # quit scrpit(for keyboard)
     for event in pg.event.get():
         if event.type == pg.QUIT or (event.type == pg.KEYDOWN and (event.key == pg.K_ESCAPE or pg.K_q)):
@@ -188,6 +187,7 @@ while True:
                         pass
             except:
                 pass
+
             draw_menual_window()
 
         else:
@@ -200,8 +200,10 @@ while True:
             connect_check_record_time = time()
             print('PLC connection error, please check PLC and ethernet cable.')
 
+        WIN.fill(RED)
         draw_error_window('Connection Error')
 
+    pg.display.update()
     sleep(0.1)
 
 close()

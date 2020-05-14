@@ -25,48 +25,63 @@ class plc:
         if not self.__client.connect():
             return
 
-        if self.__client.read_coils(0xB000+4).bits[0]:
-            return MENUAL_MODE
-        elif self.__client.read_coils(0xB000+5).bits[0]:
-            return AUTO_MODE
-        else:
+        try:
+            if self.__client.read_coils(0xB000+4).bits[0]:
+                return MENUAL_MODE
+            elif self.__client.read_coils(0xB000+5).bits[0]:
+                return AUTO_MODE
+        except Exception as e:
+            print(e)
             return -1
 
     def setting_value(self, id: int):
         if not self.__client.connect():
             return
 
-        if id == SET_GUN_SPEED:
-            return self.__client.read_coils(0x2000+13).bits[0]
-        elif id == SET_SOLDER_SPEED:
-            return self.__client.read_coils(0x2000+14).bits[0]
+        try:
+            if id == SET_GUN_SPEED:
+                return self.__client.read_coils(0x2000+13).bits[0]
+            elif id == SET_SOLDER_SPEED:
+                return self.__client.read_coils(0x2000+14).bits[0]
+        except Exception as e:
+            print(e)
+            return -1
 
     def check_value(self, id: int):
         if not self.__client.connect():
             return
 
-        if id == TORCH_SPEED_VALUE:
-            return self.__client.read_holding_registers(10).registers[0]
-        elif id == SOLDER_SPEED_VALUE:
-            return self.__client.read_holding_registers(12).registers[0]
-        else:
-            pass
+        try:
+            if id == TORCH_SPEED_VALUE:
+                return self.__client.read_holding_registers(10).registers[0]
+            elif id == SOLDER_SPEED_VALUE:
+                return self.__client.read_holding_registers(12).registers[0]
+
+        except Exception as e:
+            print(e)
+            return -1
 
     def read_value(self, id: int):
         if not self.__client.connect():
             return
 
-        if id == GUN_VOLTAGE:
-            return self.__client.read_holding_registers(100).registers[0]
-        elif id == GUN_AMP:
-            return self.__client.read_holding_registers(200).registers[0]
-        else:
-            return None
+        try:
+            if id == GUN_VOLTAGE:
+                return self.__client.read_holding_registers(100).registers[0]
+            elif id == GUN_AMP:
+                return self.__client.read_holding_registers(200).registers[0]
+
+        except:
+            print(e)
+            return -1
 
     def write_value(self, id: int, value: int):
-        if id == TORCH_SPEED_VALUE:
-            self.__client.write_register(10, int(value*2//3))
-        elif id == SOLDER_SPEED_VALUE:
-            self.__client.write_register(12, int(value*400))
-        else:
-            return
+        try:
+            if id == TORCH_SPEED_VALUE:
+                self.__client.write_register(10, int(value*2//3))
+            elif id == SOLDER_SPEED_VALUE:
+                self.__client.write_register(12, int(value*400))
+
+        except Exception as e:
+            print(e)
+            pass
