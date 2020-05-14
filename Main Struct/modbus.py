@@ -34,7 +34,7 @@ class plc:
             print(e)
             return -1
 
-    def setting_value(self, id: int):
+    def is_setting_value(self, id: int):
         if not self.__client.connect():
             return
 
@@ -66,10 +66,10 @@ class plc:
             if id == TORCH_SPEED_VALUE:
                 self.__client.write_register(10, int(value*2//3))
             elif id == SOLDER_SPEED_VALUE:
-                self.__client.write_register(12, int(value*400))
+                self.__client.write_register(13, int(value*400))
 
         except Exception as e:
-            print(e)
+            print('e2', e)
             pass
 
     def check_value(self, id: int):

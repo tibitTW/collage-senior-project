@@ -55,14 +55,14 @@ else:
     print('PLC connection error, please check PLC and ethernet cable.')
 
 ### initialize camera, including parameters ###
-# try:
-#     camera_resolution = (640, 480)
-#     camera = PiCamera()
-#     camera.resolution = camera_resolution
-#     camera.brightness = 25
-#     rawCapture = PiRGBArray(camera, size=camera_resolution)
-# except:
-#     print('Camera cannot be used.')
+try:
+    camera_resolution = (640, 480)
+    camera = PiCamera()
+    camera.resolution = camera_resolution
+    camera.brightness = 25
+    rawCapture = PiRGBArray(camera, size=camera_resolution)
+except:
+    print('Camera cannot be used.')
 ####### functions #######
 
 
@@ -103,7 +103,7 @@ def draw_menual_window():
     draw_text(str(torch_speed_value_mm_per_min), 1)
     draw_text('mm/min', 1, 1)
     draw_text(str(solder_speed_value_v), 2)
-    draw_text('mm/min', 2, 1)
+    draw_text('V', 2, 1)
     draw_text(f'{str(v_value)}/{str(a_value)}', 3)
     draw_text('V/A', 3, 1)
 
@@ -187,10 +187,10 @@ while True:
                 k = kb.scan()
                 if k == '*':
                     print('Setting Value')
-                    if plc_main.setting_value(SET_GUN_SPEED):
+                    if plc_main.is_setting_value(SET_GUN_SPEED):
                         set_val(TORCH_SPEED_VALUE)
                         print(torch_speed_value_mm_per_min)
-                    elif plc_main.setting_value(SET_SOLDER_SPEED):
+                    elif plc_main.is_setting_value(SET_SOLDER_SPEED):
                         set_val(SOLDER_SPEED_VALUE)
                         print(solder_speed_value_v)
                     else:
