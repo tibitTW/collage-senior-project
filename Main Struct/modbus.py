@@ -28,7 +28,7 @@ class plc:
         try:
             if self.__client.read_coils(0xB000+4).bits[0]:
                 return MENUAL_MODE
-            elif self.__client.read_coils(0xB000+5).bits[0]:
+            elif self.__client.read_coils(0x2000+21).bits[0]:
                 return AUTO_MODE
         except Exception as e:
             print(e)
@@ -85,3 +85,15 @@ class plc:
         except Exception as e:
             print(e)
             return -1
+
+    def send_start_autorun(self):
+        return self.__client.read_coils(0xB000+5).bits[0]
+
+    def send_shutdown(self):
+        try:
+            if self.__client.read_coils(0x2000+20).bits[0]:
+                return 1
+            else:
+                return 0
+        except:
+            pass

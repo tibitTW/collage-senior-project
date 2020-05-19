@@ -3,6 +3,8 @@
 import pygame as pg
 from time import time, sleep
 import cv2 as cv
+import os
+from datetime import datetime()
 
 from constant import *
 from color import *
@@ -29,6 +31,7 @@ try:
 
 except:
     pass
+
 
 ##### values can be controled #####
 torch_speed_value_mm_per_min = 200
@@ -66,12 +69,12 @@ except:
 ####### functions #######
 
 
-def draw_title(text: str, color=WHITE):
+def draw_title(text: str, color=WHITE, y=120):
     text = font.render(text, True, color)
 
     width = text.get_width()
     x = (W - width)//2
-    WIN.blit(text, (x, 120))
+    WIN.blit(text, (x, y))
 
 
 def draw_text(text: str, position: int, line: bool = 0, color=YELLOW):
@@ -97,9 +100,8 @@ def draw_automode_window():
 
 def draw_menual_window():
 
-    draw_title('MANUAL MODE')
-
     WIN.fill(BLACK)
+    draw_title('MANUAL MODE')
     draw_text(str(torch_speed_value_mm_per_min), 1)
     draw_text('mm/min', 1, 1)
     draw_text(str(solder_speed_value_v), 2)
@@ -118,6 +120,19 @@ def draw_message_window(message: str, msg_color: list = WHITE, bgcolor: list = R
     draw_title(message, msg_color)
 
 
+def draw_setting_value_window(id: int, value: int):
+    WIN.fill(BLACK)
+    if id == TORCH_SPEED_VALUE:
+        draw_title('SETTING TORCH', y=40)
+    elif id == SOLDER_SPEED_VALUE:
+        draw_title('SETTING SOLDER', y=40)
+    draw_title('SPEED VALUE', y=90)
+    val = font.render(value, True, WHITE)
+    width = val.get_width()
+    x = W//2 - width//2
+    WIN.blit(val, (x, 180))
+
+
 def set_val(id: int):
     kb_locked = False
     temp = ''
@@ -128,13 +143,11 @@ def set_val(id: int):
             if temp != '':
                 if id == TORCH_SPEED_VALUE:
                     temp = int(temp)
-                    temp = 2000 if temp >= 2000 else temp
                     global torch_speed_value_mm_per_min
                     torch_speed_value_mm_per_min = temp
                     plc_main.write_value(id, temp*2//3)
                 elif id == SOLDER_SPEED_VALUE:
                     temp = int(temp)
-                    temp = 10 if temp >= 10 else temp
                     global solder_speed_value_v
                     solder_speed_value_v = temp
                     plc_main.write_value(id, temp*400)
@@ -147,10 +160,17 @@ def set_val(id: int):
         elif key != 0:
             if not kb_locked:
                 temp += key
+                if id == TORCH_SPEED_VALUE:
+                    temp = '2000' if int(temp) > 2000 else temp
+                elif id == SOLDER_SPEED_VALUE:
+                    temp = '10' if int(temp) > 10 else temp
                 kb_locked = True
 
         else:
             kb_locked = False
+
+        draw_setting_value_window(id, temp)
+        pg.display.update()
 
         sleep(0.1)
 
@@ -177,8 +197,13 @@ while True:
         # 自動模式
         if mode == AUTO_MODE:
             # 影像辨識
-            if plc_main.read_value(AUTO_START):
-                pass
+            if plc_main.send_start_autorun():
+                time_now = datetime.now()
+
+                camera.start_recording(
+                    f'{time_now.year}/{time_now.month:02d}/{time_now.day:02d}/{time_now.hour:02d}:{time_now.minute}.h264')
+                camera.wait_recording(30)
+                camera.stop_recording()
             draw_automode_window()
 
         # 手動模式
@@ -200,7 +225,7 @@ while True:
 
             draw_menual_window()
 
-        else:
+        elif mode == 14234423:  # reset
             draw_message_window('RESETING...', bgcolor=BLACK)
 
     # 連線錯誤
@@ -211,7 +236,13 @@ while True:
 
         draw_message_window('Connection Error')
 
+    # PLC送出關機指令
+    if plc_main.send_shutdown():
+        print('system shutdown...')
+        os.system('sudo shutdown now')
+
     pg.display.update()
     sleep(0.1)
+
 
 close()

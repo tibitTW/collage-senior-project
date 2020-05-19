@@ -22,3 +22,6 @@
     2. ~/.profile
     3. ~/.config/lxsession/LXDE-pi/autostart
     4. ~/.bashrc
+
+- 四顆按鈕 -2 -> M4/M5
+- 
