@@ -9,25 +9,33 @@ from datetime import datetime
 from constant import *
 from color import *
 
+log = open('./log.txt', 'a')
+
+
+def get_time_now():  # get current time(for log)
+    timenow = datetime.now()
+    return f'[{timenow.year}/{timenow.month:02d}/{timenow.day:02d} {timenow.hour:02d}:{timenow.minute:02d}:{timenow.second:02d}:{timenow.microsecond}] '
+
+
 try:
     from modbus import plc
-    print('Modbus module import success.')
+    log.write(get_time_now() + 'Modbus module import success.\n')
 except:
-    print('Modbus module import failed.')
+    log.write(get_time_now() + 'Modbus module import failed.\n')
     exit()
 
 try:
     from picamera import PiCamera
     from picamera.array import PiRGBArray
-    print('Camera module import success.')
+    log.write(get_time_now() + 'Camera module import success.\n')
 except:
-    print('Camera module import failed.')
+    log.write(get_time_now() + 'Camera module import failed.\n')
 
 ### initialize keyboard ###
 try:
     import kb
     kb.init()
-    print('Keyboard initialize success.')
+    log.write(get_time_now() + 'Keyboard initialize success.\n')
 
 except:
     pass
@@ -39,6 +47,7 @@ solder_speed_value_v = 2
 ## values will read from PLC ##
 gun_height_value = 0
 v_value, a_value = 0, 0
+
 
 ######## iniaialize interface(pygame) ########
 pg.init()
@@ -53,9 +62,10 @@ WIN = pg.display.set_mode((W, H))
 ### initialize modbus connect ###
 plc_main = plc()
 if plc_main.is_connected:
-    print('PLC connected.')
+    log.write(get_time_now() + 'PLC connect success.\n')
 else:
-    print('PLC connection error, please check PLC and ethernet cable.')
+    log.write(get_time_now() +
+              'PLC connection error, please check PLC and ethernet cable.\n')
 
 ### initialize camera, including parameters ###
 try:
@@ -64,9 +74,13 @@ try:
     camera.resolution = camera_resolution
     camera.brightness = 25
     rawCapture = PiRGBArray(camera, size=camera_resolution)
+    log.write(get_time_now() + 'Camera initialized.\n')
 except:
-    print('Camera cannot be used.')
+    log.write(get_time_now() + 'Camera cannot be used.\n')
 ####### functions #######
+
+#---------------------------------#
+#---- system window functions ----#
 
 
 def draw_title(text: str, color=WHITE, y=120):
@@ -91,11 +105,6 @@ def draw_text(text: str, position: int, line: bool = 0, color=YELLOW):
     width = text.get_width()
     x = W//6 * (position*2 - 1) - width//2
     WIN.blit(text, (x, y))
-
-
-def draw_automode_window():
-    WIN.fill(BLACK)
-    draw_title('AUTO MODE')
 
 
 def draw_menual_window():
@@ -217,7 +226,7 @@ while True:
                 camera.stop_recording()
                 camera.stop_preview()
                 print('recorded success.')
-            draw_automode_window()
+            draw_message_window('AUTO MODE', bgcolor=BLACK)
 
         # 手動模式
         elif mode == MENUAL_MODE:
