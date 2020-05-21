@@ -22,9 +22,6 @@ class plc:
             print(f'Client \'{self.__ip}\' closed.')
 
     def get_status(self):
-        if not self.__client.connect():
-            return
-
         try:
             if self.__client.read_coils(0xB000+4).bits[0]:
                 return MENUAL_MODE
@@ -33,6 +30,18 @@ class plc:
         except Exception as e:
             print(e)
             return -1
+
+    def setting_value(self):
+        try:
+            return self.__client.read_coils(0x2000+4).bits[0]
+        except:
+            return 0
+
+    def setting_value_end(self):
+        try:
+            return self.__client.read_coils(0x2000+5).bits[0]
+        except:
+            return 0
 
     def is_setting_value(self, id: int):
         if not self.__client.connect():
@@ -61,7 +70,7 @@ class plc:
             print(e)
             return -1
 
-    def write_value(self, id: int, value: int):
+    def write_value(self, id: int, value):
         try:
             if id == TORCH_SPEED_VALUE:
                 self.__client.write_register(10, int(value*2//3))
@@ -69,7 +78,7 @@ class plc:
                 self.__client.write_register(12, int(value*400))
 
         except Exception as e:
-            print('e2', e)
+            print(int(value*400))
             pass
 
     def check_value(self, id: int):
@@ -87,7 +96,10 @@ class plc:
             return -1
 
     def send_start_autorun(self):
-        return self.__client.read_coils(0xB000+5).bits[0]
+        try:
+            return self.__client.read_coils(0xB000+5).bits[0]
+        except:
+            return 0
 
     def send_shutdown(self):
         try:
