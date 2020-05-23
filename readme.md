@@ -9,5 +9,5 @@ We use python for interface, OpenCV, and communication with PLC.
 │  ├─src
 ├─Main Struct
 ├─Record
-├─solder_speed_experiment
+└─solder_speed_experiment
 ```
