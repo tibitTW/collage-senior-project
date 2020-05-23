@@ -2,7 +2,7 @@
 
 import pygame as pg
 from time import time, sleep
-import cv2 as cv
+#import cv2 as cv
 import os
 from datetime import datetime
 
@@ -63,6 +63,8 @@ WIN = pg.display.set_mode((W, H))
 plc_main = plc()
 if plc_main.is_connected:
     log.write(get_time_now() + 'PLC connect success.\n')
+    plc_main.write_value(TORCH_SPEED_VALUE, torch_speed_value_mm_per_min)
+    plc_main.write_value(SOLDER_SPEED_VALUE, solder_speed_value_v)
 else:
     log.write(get_time_now() +
               'PLC connection error, please check PLC and ethernet cable.\n')
@@ -79,8 +81,8 @@ except:
     log.write(get_time_now() + 'Camera cannot be used.\n')
 ####### functions #######
 
-#---------------------------------#
-#---- system window functions ----#
+#-----------------------------------------#
+#----     system window functions     ----#
 
 
 def draw_title(text: str, color=WHITE, y=120):
@@ -148,6 +150,18 @@ def draw_setting_value_window(id: int, value: str):
     WIN.blit(val, (x, 180))
 
 
+def close():
+    try:
+        pg.quit()
+        kb.close()
+        plc_main.disconnect()
+    finally:
+        exit()
+
+#----                                 ----#
+#-----------------------------------------#
+
+
 def set_val(id: int):
     kb_locked = False
     temp = ''
@@ -193,18 +207,8 @@ def set_val(id: int):
         sleep(0.1)
 
 
-def close():
-    try:
-        pg.quit()
-        kb.close()
-        plc_main.disconnect()
-    finally:
-        exit()
-
-
 connect_check_record_time = time()
-# main struct
-while True:
+while True:  # main struct
     # quit scrpit(for keyboard)
     for event in pg.event.get():
         if event.type == pg.QUIT or (event.type == pg.KEYDOWN and (event.key == pg.K_ESCAPE or pg.K_q)):
@@ -242,6 +246,7 @@ while True:
                     else:
                         pass
             except Exception as e:
+                # log.write(get_time_now() + e)
                 print(e)
 
             draw_menual_window()
@@ -253,12 +258,14 @@ while True:
     else:
         if (time() - connect_check_record_time) // 5:
             connect_check_record_time = time()
+            log.write(get_time_now() + 'PLC connection error.')
             print('PLC connection error, please check PLC and ethernet cable.')
 
         draw_message_window('Connection Error')
 
     # PLC送出關機指令
     if plc_main.send_shutdown():
+        log.write(get_time_now() + 'System shutdown.')
         print('system shutdown...')
         os.system('sudo shutdown now')
 

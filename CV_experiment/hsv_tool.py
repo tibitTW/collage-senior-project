@@ -7,18 +7,18 @@ def nothing(_):
     pass
 
 
-src = 'src/20200417.mp4'
+src = 'Record/20200406--05_26.h264'
 
 cap = cv.VideoCapture(src)
 
 cv.namedWindow('Control Bars')
 
-cv.createTrackbar('Low-H', 'Control Bars', 0, 180, nothing)
+cv.createTrackbar('Low-H', 'Control Bars', 130, 180, nothing)
 cv.createTrackbar('Low-S', 'Control Bars', 255, 255, nothing)
-cv.createTrackbar('Low-V', 'Control Bars', 62, 255, nothing)
-cv.createTrackbar('High-H', 'Control Bars', 26, 180, nothing)
+cv.createTrackbar('Low-V', 'Control Bars', 0, 255, nothing)
+cv.createTrackbar('High-H', 'Control Bars', 180, 180, nothing)
 cv.createTrackbar('High-S', 'Control Bars', 255, 255, nothing)
-cv.createTrackbar('High-V', 'Control Bars', 142, 255, nothing)
+cv.createTrackbar('High-V', 'Control Bars', 255, 255, nothing)
 
 while True:
     ret, frame = cap.read()
@@ -45,7 +45,7 @@ while True:
     h_s = cv.getTrackbarPos('High-S', 'Control Bars')
     h_v = cv.getTrackbarPos('High-V', 'Control Bars')
 
-    frame = frame[100:-100, 300:-300]
+    # frame = frame[100:-100, 300:-300]
 
     hsv = cv.cvtColor(frame, cv.COLOR_BGR2HSV)
 
