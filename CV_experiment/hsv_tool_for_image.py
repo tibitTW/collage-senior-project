@@ -7,9 +7,11 @@ def nothing(_):
     pass
 
 
-src = './src/images/scr3.png'
+src = './src/images/src3.png'
 
-cap = cv.VideoCapture(src)
+image = cv.imread(src)
+
+image = image[300:700, 300:1100]
 
 cv.namedWindow('Control Bars')
 
@@ -21,22 +23,10 @@ cv.createTrackbar('High-S', 'Control Bars', 255, 255, nothing)
 cv.createTrackbar('High-V', 'Control Bars', 255, 255, nothing)
 
 while True:
-    ret, frame = cap.read()
-
-    if not ret:
-        break
 
     key = cv.waitKey(1)
     if key & 0xFF == ord('q'):
         break
-
-    if key & 0xFF == ord('p'):
-        while True:
-            key = cv.waitKey(1)
-            if key & 0xFF == ord('p'):
-                break
-            if key & 0xFF == ord('q'):
-                exit()
 
     l_h = cv.getTrackbarPos('Low-H', 'Control Bars')
     l_s = cv.getTrackbarPos('Low-S', 'Control Bars')
@@ -45,17 +35,15 @@ while True:
     h_s = cv.getTrackbarPos('High-S', 'Control Bars')
     h_v = cv.getTrackbarPos('High-V', 'Control Bars')
 
-    # frame = frame[100:-100, 300:-300]
-
-    hsv = cv.cvtColor(frame, cv.COLOR_BGR2HSV)
+    hsv = cv.cvtColor(image, cv.COLOR_BGR2HSV)
 
     color_bottom = np.array([l_h, l_s, l_v])
     color_top = np.array([h_h, h_s, h_v])
     mask = cv.inRange(hsv, color_bottom, color_top)
 
-    result = cv.bitwise_and(frame, frame, mask=mask)
+    result = cv.bitwise_and(image, image, mask=mask)
 
-    cv.imshow('frame', frame)
+    cv.imshow('image', image)
     cv.imshow('mask', mask)
     cv.imshow('result', result)
 
@@ -64,5 +52,4 @@ while True:
 
     sleep(0.1)
 
-cap.release()
 cv.destroyAllWindows()

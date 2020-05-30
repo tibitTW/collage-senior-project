@@ -43,6 +43,7 @@ except:
 
 ##### values can be controled #####
 torch_speed_value_mm_per_min = 200
+solder_speed_value_mm_per_min = 380
 solder_speed_value_v = 2
 ## values will read from PLC ##
 gun_height_value = 0
@@ -58,7 +59,7 @@ font_small = pg.font.SysFont('Noto Sans CJK', 24)
 
 W, H = 370, 272
 WIN = pg.display.set_mode((W, H))
-# WIN = pg.display.set_mode((W, H), pg.FULLSCREEN)
+WIN = pg.display.set_mode((W, H), pg.FULLSCREEN)
 ### initialize modbus connect ###
 plc_main = plc()
 if plc_main.is_connected:
@@ -71,18 +72,20 @@ else:
 
 ### initialize camera, including parameters ###
 try:
-    camera_resolution = (640, 480)
+    camera_resolution = (1600, 1200)
     camera = PiCamera()
     camera.resolution = camera_resolution
     camera.brightness = 25
+    camera.exposure_mode = 'backlight'
+    camera.contrast = 25
     rawCapture = PiRGBArray(camera, size=camera_resolution)
     log.write(get_time_now() + 'Camera initialized.\n')
 except:
     log.write(get_time_now() + 'Camera cannot be used.\n')
 ####### functions #######
 
-#-----------------------------------------#
-#----     system window functions     ----#
+#---------------------------------------------------------------------------------#
+#----                         system window functions                         ----#
 
 
 def draw_title(text: str, color=WHITE, y=120):
@@ -124,11 +127,6 @@ def draw_menual_window():
     draw_text('V/A', 3, 1)
 
 
-def draw_error_window(message):
-    WIN.fill(RED)
-    draw_title(message, WHITE)
-
-
 def draw_message_window(message: str, msg_color: list = WHITE, bgcolor: list = RED):
     WIN.fill(bgcolor)
     draw_title(message, msg_color)
@@ -158,8 +156,8 @@ def close():
     finally:
         exit()
 
-#----                                 ----#
-#-----------------------------------------#
+#----                                                                         ----#
+#---------------------------------------------------------------------------------#
 
 
 def set_val(id: int):
@@ -226,7 +224,7 @@ while True:  # main struct
                 camera.start_recording(
                     f'{time_now.year}{time_now.month:02d}{time_now.day:02d}--{time_now.hour:02d}:{time_now.minute}.h264')
                 camera.start_preview()
-                camera.wait_recording(30)
+                camera.wait_recording(60)
                 camera.stop_recording()
                 camera.stop_preview()
                 print('recorded success.')
@@ -245,6 +243,19 @@ while True:  # main struct
                         print(solder_speed_value_v)
                     else:
                         pass
+
+                if plc_main.send_start_autorun():
+                    print('start recording ...')
+                    time_now = datetime.now()
+
+                    camera.start_recording(
+                        f'{time_now.year}{time_now.month:02d}{time_now.day:02d}--{time_now.hour:02d}:{time_now.minute}.h264')
+                    camera.start_preview()
+                    camera.wait_recording(60)
+                    camera.stop_recording()
+                    camera.stop_preview()
+                    print('recorded success.')
+
             except Exception as e:
                 # log.write(get_time_now() + e)
                 print(e)

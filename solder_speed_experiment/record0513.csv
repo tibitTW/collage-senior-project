@@ -1,4 +1,4 @@
-Length(mm),Duration Time(s),Voltage
+Length(mm),Duration Time(s),Voltage(V)
 16.8,10,2
 16.7,10,2
 8.9,5,2
