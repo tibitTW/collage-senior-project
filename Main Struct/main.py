@@ -27,9 +27,17 @@ except:
 try:
     from picamera import PiCamera
     from picamera.array import PiRGBArray
-    log.write(get_time_now() + 'Camera module import success.\n')
+
+    camera_resolution = (1600, 1200)
+    camera = PiCamera()
+    camera.resolution = camera_resolution
+    camera.brightness = 25
+    camera.exposure_mode = 'backlight'
+    camera.contrast = 25
+    rawCapture = PiRGBArray(camera, size=camera_resolution)
+    log.write(get_time_now() + 'Camera initialized success.\n')
 except:
-    log.write(get_time_now() + 'Camera module import failed.\n')
+    log.write(get_time_now() + 'Camera initialized failed.\n')
 
 ### initialize keyboard ###
 try:
@@ -43,9 +51,8 @@ except:
 
 ##### values can be controled #####
 torch_speed_value_mm_per_min = 200
-solder_speed_value_mm_per_min = 380
-solder_speed_value_v = 2
-## values will read from PLC ##
+solder_speed_value_mm_per_min = 350
+#### values will read from PLC ####
 gun_height_value = 0
 v_value, a_value = 0, 0
 
@@ -65,27 +72,16 @@ plc_main = plc()
 if plc_main.is_connected:
     log.write(get_time_now() + 'PLC connect success.\n')
     plc_main.write_value(TORCH_SPEED_VALUE, torch_speed_value_mm_per_min)
-    plc_main.write_value(SOLDER_SPEED_VALUE, solder_speed_value_v)
+    plc_main.write_value(SOLDER_SPEED_VALUE, solder_speed_value_mm_per_min)
 else:
     log.write(get_time_now() +
               'PLC connection error, please check PLC and ethernet cable.\n')
 
-### initialize camera, including parameters ###
-try:
-    camera_resolution = (1600, 1200)
-    camera = PiCamera()
-    camera.resolution = camera_resolution
-    camera.brightness = 25
-    camera.exposure_mode = 'backlight'
-    camera.contrast = 25
-    rawCapture = PiRGBArray(camera, size=camera_resolution)
-    log.write(get_time_now() + 'Camera initialized.\n')
-except:
-    log.write(get_time_now() + 'Camera cannot be used.\n')
+
 ####### functions #######
 
-#---------------------------------------------------------------------------------#
-#----                         system window functions                         ----#
+#-----------------------------------------------------#
+#----                system window                ----#
 
 
 def draw_title(text: str, color=WHITE, y=120):
@@ -121,8 +117,8 @@ def draw_menual_window():
     else:
         draw_text(str(torch_speed_value_mm_per_min), 1)
     draw_text('mm/min', 1, 1)
-    draw_text(str(solder_speed_value_v), 2)
-    draw_text('V', 2, 1)
+    draw_text(str(solder_speed_value_mm_per_min), 2)
+    draw_text('mm/min', 2, 1)
     draw_text(f'{str(v_value)}/{str(a_value)}', 3)
     draw_text('V/A', 3, 1)
 
@@ -156,8 +152,8 @@ def close():
     finally:
         exit()
 
-#----                                                                         ----#
-#---------------------------------------------------------------------------------#
+#----                                             ----#
+#-----------------------------------------------------#
 
 
 def set_val(id: int):
@@ -175,8 +171,8 @@ def set_val(id: int):
                     plc_main.write_value(id, temp)
                 elif id == SOLDER_SPEED_VALUE:
                     temp = float(temp)
-                    global solder_speed_value_v
-                    solder_speed_value_v = temp
+                    global solder_speed_value_mm_per_min
+                    solder_speed_value_mm_per_min = temp
                     plc_main.write_value(id, temp)
             else:
                 pass
@@ -240,7 +236,7 @@ while True:  # main struct
                         print(torch_speed_value_mm_per_min)
                     elif plc_main.is_setting_value(SET_SOLDER_SPEED):
                         set_val(SOLDER_SPEED_VALUE)
-                        print(solder_speed_value_v)
+                        print(solder_speed_value_mm_per_min)
                     else:
                         pass
 
@@ -257,7 +253,7 @@ while True:  # main struct
                     print('recorded success.')
 
             except Exception as e:
-                # log.write(get_time_now() + e)
+                log.write(get_time_now() + e)
                 print(e)
 
             draw_menual_window()
