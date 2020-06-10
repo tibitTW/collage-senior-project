@@ -7,7 +7,7 @@ def nothing(_):
     pass
 
 
-src = './src/images/src3.png'
+src = 'record/images/image3.jpg'
 
 image = cv.imread(src)
 

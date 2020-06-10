@@ -7,7 +7,7 @@ def nothing(_):
     pass
 
 
-src = './src/images/scr3.png'
+src = './record/videos/glitch1.h264'
 
 cap = cv.VideoCapture(src)
 

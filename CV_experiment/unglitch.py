@@ -1,19 +1,15 @@
 import cv2 as cv
 import numpy as np
-from time import sleep
 
 video = cv.VideoCapture('./record/videos/glitch1.h264')
 
 purple_glitch_bottom = np.array([149, 216, 56])
 purple_glitch_top = np.array([166, 255, 221])
 
-x, y = 0, 0
 
-while True:
-    ret, frame = video.read()
+ret, frame = video.read()
 
-    if not ret:
-        break
+while ret:
 
     key = cv.waitKey(1)
     if key & 0xff == ord('q'):
@@ -27,22 +23,15 @@ while True:
     for row in glitch_mask:
         for point in row:
             if point:
-                size += 1
+                size = 1
+                break
 
     if size:
-        print('y')
-        x += 1
+        pass
     else:
-        print('n')
-        y += 1
+        cv.imshow('frame', frame)
 
-    result = cv.bitwise_and(frame, frame, mask=glitch_mask)
-
-    # cv.imshow('frame', frame)
-    # cv.imshow('result', result)
-    # sleep(0.02)
+    ret, frame = video.read()
 
 video.release()
 cv.destroyAllWindows()
-
-print(x, y)

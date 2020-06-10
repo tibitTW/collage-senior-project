@@ -1,5 +1,8 @@
 from pymodbus.client.sync import ModbusTcpClient
-from constant import *
+from constant import TORCH_SPEED_VALUE, SOLDER_SPEED_VALUE
+from constant import MENUAL_MODE, AUTO_MODE
+from constant import GUN_VOLTAGE, GUN_AMP
+from constant import SET_GUN_SPEED, SET_SOLDER_SPEED
 
 
 class plc:
@@ -21,7 +24,7 @@ class plc:
             self.__client.close()
             print(f'Client \'{self.__ip}\' closed.')
 
-    def get_status(self):
+    def get_mode_status(self):
         try:
             if self.__client.read_coils(0xB000+4).bits[0]:
                 return MENUAL_MODE
@@ -77,9 +80,8 @@ class plc:
             elif id == SOLDER_SPEED_VALUE:
                 self.__client.write_register(12, int((value + 415.70) * 0.947))
 
-        except Exception as e:
+        except:
             print(int(value*400))
-            pass
 
     def check_value(self, id: int):
         if not self.__client.connect():
@@ -109,3 +111,7 @@ class plc:
                 return 0
         except:
             pass
+
+    #
+    def reset(self):
+        return 0

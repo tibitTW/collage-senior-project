@@ -16,5 +16,9 @@ We create a sh script to run our system interface, and run this script in `/etc/
 Add this line in `autostart` file:
 
 ```bash
-@sh /home/pi/autostart/sh
+@sh /home/pi/autostart.sh
 ```
+
+## ToDo
+
+`modbus.reset()`
