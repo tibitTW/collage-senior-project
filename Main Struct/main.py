@@ -173,7 +173,7 @@ def set_val(id: int):
                 if id == TORCH_SPEED_VALUE:
                     temp = '4000' if int(temp) > 4000 else temp
                 elif id == SOLDER_SPEED_VALUE:
-                    temp = '10' if float(temp) > 10 else temp
+                    temp = '1000' if float(temp) > 1000 else temp
                 kb_locked = True
 
         else:
