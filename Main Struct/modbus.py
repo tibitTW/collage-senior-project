@@ -114,4 +114,10 @@ class plc:
 
     #
     def reset(self):
-        return 0
+        try:
+            if self.__client.read_coils(0x2000+200).bits[0]:
+                return 1
+            else:
+                return 0
+        except:
+            return

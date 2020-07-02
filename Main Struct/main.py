@@ -10,7 +10,7 @@ from time import time
 # modules for imgae processing and machine learning
 import cv2 as cv
 import numpy as np
-from sklearn.linear_model import LinearRegression
+# from sklearn.linear_model import LinearRegression
 
 # import constants and colors(for convenience)
 from constant import TORCH_SPEED_VALUE, SOLDER_SPEED_VALUE
@@ -65,7 +65,7 @@ BLUE = (0, 0, 255)
 YELLOW = (255, 255, 0)
 
 
-def _draw_title(text: str, color=WHITE, y=120):
+def _draw_title(text: str, color=WHITE, y=260):
     text = title_font.render(text, True, color)
 
     width = text.get_width()
@@ -79,10 +79,10 @@ def _draw_text(text: str, position: int, line: bool = 0, color=YELLOW):
 
     if not line:
         text = title_font.render(text, True, color)
-        y = 210
+        y = 400
     else:
         text = regular_font.render(text, True, color)
-        y = 240
+        y = 480
 
     width = text.get_width()
     x = W//6 * (position*2 - 1) - width//2
@@ -92,7 +92,7 @@ def _draw_text(text: str, position: int, line: bool = 0, color=YELLOW):
 def draw_menual_window():
 
     WIN.fill(BLACK)
-    _draw_title('MANUAL MODE')
+    _draw_title('MANUAL MODE', y=180)
     color = RED if torch_speed_value_mm_per_min > 2000 else WHITE
 
     _draw_text(str(torch_speed_value_mm_per_min), 1, color=color)
@@ -185,35 +185,35 @@ def set_val(id: int):
         sleep(0.1)
 
 
-def get_puddle_contour(mask):
+# def get_puddle_contour(mask):
 
-    contour_point = [hsv_image.shape[1], 0]
+#     contour_point = [hsv_image.shape[1], 0]
 
-    y = 0
-    for row in contour_mask:
-        x = 0
-        for point in row:
-            if x < contour_point[0]:
-                contour_point = [x, y]
-            x += 1
-        y += 1
+#     y = 0
+#     for row in contour_mask:
+#         x = 0
+#         for point in row:
+#             if x < contour_point[0]:
+#                 contour_point = [x, y]
+#             x += 1
+#         y += 1
 
-    return contour_point
+#     return contour_point
 
 
-def get_middle_line_parameters(mask):
-    X, Y = [], []
-    y = 0
-    for row in mask:
-        x = 0
-        for point in row:
-            if point:
-                X.append([x])
-                Y.append(y)
-            x += 1
-        y += 1
-    lr_model = LinearRegression().fit(X, Y)
-    return lr_model.coef_, lr_model.intercept_
+# def get_middle_line_parameters(mask):
+#     X, Y = [], []
+#     y = 0
+#     for row in mask:
+#         x = 0
+#         for point in row:
+#             if point:
+#                 X.append([x])
+#                 Y.append(y)
+#             x += 1
+#         y += 1
+#     lr_model = LinearRegression().fit(X, Y)
+#     return lr_model.coef_, lr_model.intercept_
 
 
 hsv_color_bottom = np.array([48, 23, 44])
@@ -231,12 +231,12 @@ v_value, a_value = 0, 0
 pg.init()
 pg.font.init()
 # initialize font(pygame)
-title_font = pg.font.SysFont('Noto Sans CJK', 40)
-regular_font = pg.font.SysFont('Noto Sans CJK', 24)
+title_font = pg.font.SysFont('Noto Sans CJK', 80)
+regular_font = pg.font.SysFont('Noto Sans CJK', 40)
 
-W, H = 400, 272
-WIN = pg.display.set_mode((W, H))
-# WIN = pg.display.set_mode((W, H), pg.FULLSCREEN)
+W, H = 720, 560
+# WIN = pg.display.set_mode((W, H))
+WIN = pg.display.set_mode((W, H), pg.FULLSCREEN)
 
 # initialize modbus connect
 plc_main = plc()
@@ -266,43 +266,43 @@ while True:  # main struct
             # image processing
             if plc_main.send_start_autorun():
                 print('Image processing start.')
-                i = 0  # control
+                # i = 0  # control
 
-                current_time = time()
-                while True:
-                    if i > 10:
-                        break
-                    if plc_main.reset():
-                        break
-                    image = camera.capture()
-                    hsv_image = cv.cvtColor(image, cv.COLOR_BGR2HSV)
-                    contour_mask = cv.inRange(
-                        hsv_image, hsv_color_bottom, hsv_color_top)
-                    # get welding puddle contour
-                    contour_point = get_puddle_contour(contour_mask)
-                    line_mask = cv.inRange(
-                        hsv_image, line_color_bottom, line_color_top)
-                    line_coef, line_intercept = get_middle_line_parameters(
-                        line_mask)
+                # current_time = time()
+                # while True:
+                #     if i > 10:
+                #         break
+                #     if plc_main.reset():
+                #         break
+                #     image = camera.capture()
+                #     hsv_image = cv.cvtColor(image, cv.COLOR_BGR2HSV)
+                #     contour_mask = cv.inRange(
+                #         hsv_image, hsv_color_bottom, hsv_color_top)
+                #     # get welding puddle contour
+                #     contour_point = get_puddle_contour(contour_mask)
+                #     line_mask = cv.inRange(
+                #         hsv_image, line_color_bottom, line_color_top)
+                #     line_coef, line_intercept = get_middle_line_parameters(
+                #         line_mask)
 
-                    pointA = (
-                        contour_point[0],
-                        contour_point[0] * line_coef + line_intercept)
-                    pointB = (
-                        (contour_point[1] - line_intercept)/line_coef,
-                        contour_point[1])
+                #     pointA = (
+                #         contour_point[0],
+                #         contour_point[0] * line_coef + line_intercept)
+                #     pointB = (
+                #         (contour_point[1] - line_intercept)/line_coef,
+                #         contour_point[1])
 
-                    ab_distance = ((pointA[0] - pointB[0]) ** 2 +
-                                   (pointA[1] - pointB[1]) ** 2) ** 0.5
+                #     ab_distance = ((pointA[0] - pointB[0]) ** 2 +
+                #                    (pointA[1] - pointB[1]) ** 2) ** 0.5
 
-                    puddle_width = ab_distance * \
-                        line_coef / (line_coef ** 2 + 1)
+                #     puddle_width = ab_distance * \
+                #         line_coef / (line_coef ** 2 + 1)
 
-                    print('width:', puddle_width,
-                          ', measure_time:', time() - current_time)
+                #     print('width:', puddle_width,
+                #           ', measure_time:', time() - current_time)
 
-                    current_time = time()
-                    i += 1
+                #     current_time = time()
+                #     i += 1
 
             draw_message_window('AUTO MODE', bgcolor=BLACK)
 
