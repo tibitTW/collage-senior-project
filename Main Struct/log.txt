@@ -1,0 +1,16 @@
+[2020/05/21 17:52:11:62603] Modbus module import success.
+[2020/05/21 17:52:11:62603] Camera module import failed.
+[2020/05/21 17:52:14:556475] PLC connection error, please check PLC and ethernet cable.
+[2020/05/21 17:52:14:556475] Camera cannot be used.
+[2020/06/02 21:46:09:973273] Modbus module import success.
+[2020/06/02 21:46:09:973273] Camera initialized failed.
+[2020/06/02 21:46:14:98703] PLC connection error, please check PLC and ethernet cable.
+[2020/06/02 21:46:21:175390] Modbus module import success.
+[2020/06/02 21:46:21:175390] Camera initialized failed.
+[2020/06/02 21:46:25:200549] PLC connection error, please check PLC and ethernet cable.
+[2020/06/04 {timenow.hour:02d}:{timenow.minute:02d}:{timenow.second:02d}:{timenow.microsecond}] Camera initialized failed.
+[2020/06/04 {timenow.hour:02d}:{timenow.minute:02d}:{timenow.second:02d}:{timenow.microsecond}] Camera initialized failed.
+[2020/06/04 {timenow.hour:02d}:{timenow.minute:02d}:{timenow.second:02d}:{timenow.microsecond}] Camera initialized failed.
+[2020/06/04 {timenow.hour:02d}:{timenow.minute:02d}:{timenow.second:02d}:{timenow.microsecond}] PLC connection error, please check PLC and ethernet cable.
+[2020/06/04 {timenow.hour:02d}:{timenow.minute:02d}:{timenow.second:02d}:{timenow.microsecond}] Camera initialized failed.
+[2020/06/04 {timenow.hour:02d}:{timenow.minute:02d}:{timenow.second:02d}:{timenow.microsecond}] PLC connection error, please check PLC and ethernet cable.
