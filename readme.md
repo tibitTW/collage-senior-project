@@ -32,3 +32,4 @@ Add this line in the `autostart` file:
 ```bash
 @sh /home/pi/autostart.sh
 ```
+
